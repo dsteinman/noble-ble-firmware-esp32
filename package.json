@@ -1,0 +1,16 @@
+{
+  "name": "noble-ble-firmware-esp32",
+  "version": "1.0.0",
+  "description": "",
+  "main": "peripheral-explorer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@abandonware/noble": "git+https://github.com/abandonware/noble.git",
+    "async": "^2.6.1",
+    "chalk": "^2.4.1"
+  }
+}
