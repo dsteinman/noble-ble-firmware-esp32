@@ -63,7 +63,6 @@ function explore(peripheral) {
 		peripheral.discoverServices([], function (error, services) {
 			console.log('services', services.length);
 			
-			
 			var serviceIndex = 0;
 			
 			async.whilst(
@@ -74,13 +73,10 @@ function explore(peripheral) {
 					var service = services[serviceIndex];
 					var serviceInfo = service.uuid;
 					
-					
-					
 					if (service.name) {
-						serviceInfo += 'SERVICE NAME (' + service.name + ')';
+						serviceInfo += ' (' + service.name + ')';
 					}
 					console.log(serviceInfo);
-					console.log('service', service);
 					
 					service.discoverCharacteristics([], function (error, characteristics) {
 						console.log('characteristics', characteristics.length);
@@ -130,27 +126,7 @@ function explore(peripheral) {
 									function (callback) {
 										characteristicInfo += '\n    properties  ' + characteristic.properties.join(', ');
 										
-										// writeWithoutResponse
-										if (characteristic.properties.indexOf('writeWithoutResponse') !== -1) {
-											console.log('foudn writeWithoutResponse...', characteristic);
-											var newvalue = 'test'+Math.random().toString().substring(2,5);
-											var buf = Buffer.from(newvalue);
-											characteristic.write(buf, true, function (e) {
-												console.log('wrote', buf);
-
-												// try reading again
-												characteristic.read(function (error, data) {
-													if (data) {
-														var string = data.toString('ascii');
-														console.log('new value:', string);
-													}
-												});
-												callback();
-											});
-										}
-										else if (characteristic.properties.indexOf('read') !== -1) {
-											console.log('found read', characteristic);
-											
+										if (characteristic.properties.indexOf('read') !== -1) {
 											characteristic.read(function (error, data) {
 												if (data) {
 													var string = data.toString('ascii');
@@ -162,7 +138,7 @@ function explore(peripheral) {
 											
 											// read & write
 											if (characteristic.properties.indexOf('write') !== -1) {
-												console.log('found read write...', characteristic.properties);
+												console.log('writing...');
 												var newvalue = 'test'+Math.random().toString().substring(2,5);
 												var buf = Buffer.from(newvalue);
 												characteristic.write(buf, false, function (e) {
@@ -177,34 +153,12 @@ function explore(peripheral) {
 													});
 												});
 											}
-											else if (characteristic.properties.indexOf('writeWithoutResponse') !== -1) {
-												console.log('found writeWithoutResponse...', characteristic.properties);
-												var newvalue = 'test'+Math.random().toString().substring(2,5);
-												var buf = Buffer.from(newvalue);
-												characteristic.write(buf, true, function (e) {
-													console.log('writeWithoutResponse', newvalue, buf);
-
-													// try reading again
-													characteristic.read(function (error, data) {
-														if (data) {
-															var string = data.toString('ascii');
-															console.log('new value:', string);
-														}
-													});
-												});
-											}
-											else {
-												console.log('no write', characteristic.properties);
-											}
 										} else if (characteristic.properties.indexOf('notify') !== -1) {
-											console.log('found notify', characteristic);
+											console.log('found notify');
 											
 											characteristic.on('data', function (data) {
 												var value = data.readUIntBE(0, 1);
-												// var value2 = data.readUIntBE(0, 2);
-												// var value = data.toString('ascii');
-												
-												console.log(characteristic.uuid, 'notify:', value); // never gets called
+												console.log('notify:', value); // never gets called
 											});
 											
 											characteristic.subscribe(function () {
